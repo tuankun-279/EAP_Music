@@ -1,0 +1,97 @@
+﻿@*@model IEnumerable<EAP_Music_Tên_Tuấn.Models.Album>*@
+@model PagedList.IPagedList<EAP_Music_Tên_Tuấn.Models.Album>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm("Index", "Albums", FormMethod.Get, new { id = "form1" }))
+{
+    <p>
+        @*<div id='Paging'>*@
+            Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+            Page Size: @Html.DropDownList("pageSize", ViewBag.CurrentFilter as string)
+            <input type="submit" value="Search" />
+        @*</div>*@            
+</p>
+}
+<table class="table">
+    <tr>        
+        <th>
+            
+            @Html.ActionLink("Title ", "Index", new { sortOrder = ViewBag.TitleSortParm,
+           currentFilter = ViewBag.CurrentFilter, pageSize = ViewBag.psize },
+            new { style = "color: white" })<br/>
+            (Tựa đề)
+        </th>
+        <th>
+            Genre<br/>
+            (Thể Loại)
+        </th>
+        <th>
+            @Html.ActionLink("Release Date", "Index", new { sortOrder = ViewBag.DateSortParm,
+           currentFilter = ViewBag.CurrentFilter, pageSize = ViewBag.psize },
+           new { style = "color: white" })<br/>
+            (Ngày Phát Hành)
+        </th>
+        <th>
+            @Html.ActionLink("Artist", "Index", new { sortOrder = ViewBag.ArtistSortParm,
+           currentFilter = ViewBag.CurrentFilter, pageSize = ViewBag.psize },
+           new { style = "color: white" })<br/>
+            (Nghệ Sĩ)
+        </th>
+        <th>
+            Price($)<br/>
+            (Giá Tiền)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Genre.GenreName)
+        </td>        
+        <td>
+            @Html.DisplayFor(modelItem => item.ReleaseDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Artist)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.AlbumId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AlbumId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AlbumId })
+        </td>
+    </tr>
+}
+
+</table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, pageSize = ViewBag.psize }))
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#pageSize").change(function () {
+            
+            $("#form1").submit();
+        });
+    });
+</script>
